@@ -714,7 +714,7 @@
   }, 60);
 })();
 
-/* ── SYSTEM GLITCH COLLAPSE CURSOR SCRIPT ── */
+/* ── CONTINUOUS COMET TRAIL CURSOR SCRIPT ── */
 const canvas = document.getElementById('pixelfx');
 const ctx = canvas.getContext('2d');
 let width, height;
@@ -736,37 +736,25 @@ window.addEventListener('mousemove', e => {
 });
 
 class Particle {
-  constructor(x, y) {
-    this.startX = x;
-    this.startY = y;
+  constructor(x, y, isHovering) {
     this.x = x;
     this.y = y;
+    // Continuous trailing drift velocity
+    this.vx = (Math.random() - 0.5) * 1.5;
+    this.vy = (Math.random() - 0.5) * 1.5;
     this.life = 1;
-    this.decay = Math.random() * 0.04 + 0.02;
-    this.w = Math.random() > 0.5 ? 1 : 2;
-    this.h = this.w === 1 ? (Math.random() > 0.5 ? 1 : 2) : 1;
-    this.color = Math.random() > 0.85 ? '#ff4d3e' : '#c8f03a';
+    this.decay = Math.random() * 0.03 + 0.015;
+    this.w = Math.random() > 0.5 ? 2 : 4;
+    this.h = this.w === 2 ? (Math.random() > 0.5 ? 2 : 4) : 2;
+    this.color = isHovering ? '#ff4d3e' : '#c8f03a';
     this.alpha = 1;
   }
 
-  update(cx, cy, isHovering) {
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
     this.life -= this.decay;
-    if (this.life > 0) {
-      if (isHovering) {
-        this.x = cx + (Math.random() - 0.5) * 6;
-        this.y = cy + (Math.random() - 0.5) * 6;
-        this.alpha = this.life;
-      } else {
-        let targetX = cx;
-        let targetY = cy;
-        let progress = 1 - this.life;
-        let sineVib = Math.sin(progress * 10) * (this.life * 4);
-
-        this.x = targetX + (this.startX - targetX) * this.life + sineVib;
-        this.y = targetY + (this.startY - targetY) * this.life + sineVib;
-        this.alpha = this.life * 2;
-      }
-    }
+    this.alpha = this.life;
   }
 
   draw() {
@@ -790,26 +778,35 @@ interactiveElements.forEach(el => {
   });
 });
 
-function triggerBurst(x, y) {
-  if (particles.length < 60) {
-    particles.push(new Particle(x, y));
-  }
-}
-
 function animate() {
   ctx.clearRect(0, 0, width, height);
 
-  if (cursor.active && cursor.hovering) {
-    triggerBurst(cursor.x, cursor.y);
-  }
-
+  // Continuously spawn comet-trail particles on every frame as the mouse moves
   if (cursor.active) {
-    ctx.fillStyle = cursor.hovering ? '#ff4d3e' : '#c8f03a';
-    ctx.fillRect(Math.floor(cursor.x - 1), Math.floor(cursor.y - 1), 5, 5);
+    particles.push(new Particle(cursor.x, cursor.y, cursor.hovering));
   }
 
+  // Draw main cursor dot (larger, translucent, with neon glow when hovered)
+  if (cursor.active) {
+    ctx.save();
+    if (cursor.hovering) {
+      ctx.fillStyle = 'rgba(200, 240, 58, 0.4)'; // Translucent glowing lime
+      ctx.shadowColor = '#c8f03a';
+      ctx.shadowBlur = 16;
+      // Draw a larger block when hovering
+      ctx.fillRect(Math.floor(cursor.x - 4), Math.floor(cursor.y - 4), 8, 8);
+    } else {
+      ctx.fillStyle = '#c8f03a';
+      ctx.shadowColor = '#c8f03a';
+      ctx.shadowBlur = 8; // Small neon glow always
+      ctx.fillRect(Math.floor(cursor.x - 2.5), Math.floor(cursor.y - 2.5), 5, 5);
+    }
+    ctx.restore();
+  }
+
+  // Update and draw trailing shard particles
   for (let i = particles.length - 1; i >= 0; i--) {
-    particles[i].update(cursor.x, cursor.y, cursor.hovering);
+    particles[i].update();
     particles[i].draw();
     if (particles[i].life <= 0) {
       particles.splice(i, 1);
