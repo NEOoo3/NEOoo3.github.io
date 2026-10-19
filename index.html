@@ -42,24 +42,11 @@
     background-size: 200px 200px;
   }
 
-  /* ─── CUSTOM CURSOR ─── */
-  #cursor-dot {
-    position: fixed; width: 8px; height: 8px;
-    background: var(--accent); border-radius: 50%;
-    pointer-events: none; z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s ease, width 0.3s, height 0.3s, background 0.3s;
+  /* ─── PIXEL COMET CANVAS ─── */
+  #pixelfx {
+    position: fixed; inset: 0; pointer-events: none;
+    z-index: 9999; width: 100%; height: 100%;
   }
-  #cursor-ring {
-    position: fixed; width: 36px; height: 36px;
-    border: 1px solid rgba(200, 240, 58, 0.4); border-radius: 50%;
-    pointer-events: none; z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: transform 0.18s ease, width 0.3s, height 0.3s, border-color 0.3s, opacity 0.3s;
-  }
-  body.hovering #cursor-dot  { width: 12px; height: 12px; background: #fff; }
-  body.hovering #cursor-ring { width: 56px; height: 56px; border-color: var(--accent); opacity: 0.6; }
-  body.clicking #cursor-dot  { transform: translate(-50%, -50%) scale(0.6); }
 
   /* ─── SCROLLBAR ─── */
   ::-webkit-scrollbar { width: 3px; }
@@ -442,7 +429,7 @@
     .footer-bottom { flex-direction: column; align-items: flex-start; gap: 2rem; }
     .footer-links { align-items: flex-start; }
     .modal-content { width: 95%; height: 88vh; padding: 1.2rem; }
-    #cursor-dot, #cursor-ring { display: none; }
+    #pixelfx { display: none; }
   }
 
   /* ─── LOADING SCREEN ─── */
@@ -478,9 +465,8 @@
   <div class="loader-pct" id="loader-pct">000</div>
 </div>
 
-<!-- CURSORS -->
-<div id="cursor-dot"></div>
-<div id="cursor-ring"></div>
+<!-- PIXEL COMET CANVAS -->
+<canvas id="pixelfx"></canvas>
 
 <!-- RESUME MODAL POPUP WITH EMBEDDED PDF VIEWER -->
 <div id="resume-modal">
@@ -728,31 +714,112 @@
   }, 60);
 })();
 
-/* ── CURSOR ── */
-const dot  = document.getElementById('cursor-dot');
-const ring = document.getElementById('cursor-ring');
-let mx = 0, my = 0, rx = 0, ry = 0;
+/* ── SYSTEM GLITCH COLLAPSE CURSOR SCRIPT ── */
+const canvas = document.getElementById('pixelfx');
+const ctx = canvas.getContext('2d');
+let width, height;
 
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  dot.style.left  = mx + 'px';
-  dot.style.top   = my + 'px';
+function resize() {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+let cursor = { x: -100, y: -100, active: false, hovering: false };
+let particles = [];
+
+window.addEventListener('mousemove', e => {
+  cursor.x = e.clientX;
+  cursor.y = e.clientY;
+  cursor.active = true;
 });
 
-(function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top  = ry + 'px';
-  requestAnimationFrame(animRing);
-})();
+class Particle {
+  constructor(x, y) {
+    this.startX = x;
+    this.startY = y;
+    this.x = x;
+    this.y = y;
+    this.life = 1;
+    this.decay = Math.random() * 0.04 + 0.02;
+    this.w = Math.random() > 0.5 ? 1 : 2;
+    this.h = this.w === 1 ? (Math.random() > 0.5 ? 1 : 2) : 1;
+    this.color = Math.random() > 0.85 ? '#ff4d3e' : '#c8f03a';
+    this.alpha = 1;
+  }
 
-document.querySelectorAll('a, button, .exp-row, .project-card, .skill-pill').forEach(el => {
-  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  update(cx, cy, isHovering) {
+    this.life -= this.decay;
+    if (this.life > 0) {
+      if (isHovering) {
+        this.x = cx + (Math.random() - 0.5) * 6;
+        this.y = cy + (Math.random() - 0.5) * 6;
+        this.alpha = this.life;
+      } else {
+        let targetX = cx;
+        let targetY = cy;
+        let progress = 1 - this.life;
+        let sineVib = Math.sin(progress * 10) * (this.life * 4);
+
+        this.x = targetX + (this.startX - targetX) * this.life + sineVib;
+        this.y = targetY + (this.startY - targetY) * this.life + sineVib;
+        this.alpha = this.life * 2;
+      }
+    }
+  }
+
+  draw() {
+    if (this.life > 0) {
+      ctx.fillStyle = `${this.color}${Math.floor(Math.max(0, Math.min(1, this.alpha)) * 255).toString(16).padStart(2, '0')}`;
+      ctx.fillRect(Math.floor(this.x), Math.floor(this.y), this.w, this.h);
+    }
+  }
+}
+
+const interactiveElements = document.querySelectorAll('a, button, .project-card, .exp-row, .skill-pill');
+
+interactiveElements.forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.hovering = true;
+    canvas.style.cursor = 'none';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.hovering = false;
+    canvas.style.cursor = 'none';
+  });
 });
-document.addEventListener('mousedown', () => document.body.classList.add('clicking'));
-document.addEventListener('mouseup',   () => document.body.classList.remove('clicking'));
+
+function triggerBurst(x, y) {
+  if (particles.length < 60) {
+    particles.push(new Particle(x, y));
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, width, height);
+
+  if (cursor.active && cursor.hovering) {
+    triggerBurst(cursor.x, cursor.y);
+  }
+
+  if (cursor.active) {
+    ctx.fillStyle = cursor.hovering ? '#ff4d3e' : '#c8f03a';
+    ctx.fillRect(Math.floor(cursor.x - 1), Math.floor(cursor.y - 1), 3, 3);
+  }
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update(cursor.x, cursor.y, cursor.hovering);
+    particles[i].draw();
+    if (particles[i].life <= 0) {
+      particles.splice(i, 1);
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+animate();
 
 /* ── RESUME MODAL HANDLERS ── */
 const modal = document.getElementById('resume-modal');
