@@ -374,6 +374,19 @@
   .modal-btn.primary { background: var(--accent); color: var(--bg); font-weight: 700; border: none; }
   .modal-btn:hover { opacity: 0.85; }
 
+  /* ─── TECH METRICS BAR ─── */
+  .tech-metrics-bar {
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 1.2rem 3.5rem; background: var(--bg2);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;
+  }
+  .metric-badge {
+    font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em; color: var(--fg);
+    text-transform: uppercase; display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.4rem 0.8rem; background: var(--card); border: 1px solid var(--border); border-radius: 2px;
+  }
+  .metric-badge span { color: var(--accent); }
+
   /* ─── SCROLL REVEAL ─── */
   .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
   .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -381,34 +394,36 @@
   .reveal-delay-2 { transition-delay: 0.2s; }
   .reveal-delay-3 { transition-delay: 0.35s; }
 
-  /* ─── MARQUEE ─── */
-  .marquee-wrap {
-    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    padding: 1.2rem 0; overflow: hidden; white-space: nowrap;
-    background: var(--bg2);
+  /* ─── TABLET / IPAD RESPONSIVE (MAX-WIDTH: 1100px) ─── */
+  @media (max-width: 1100px) {
+    nav { padding: 1.2rem 2.5rem; }
+    .hero { padding: 0 2.5rem; }
+    section { padding: 6rem 2.5rem; }
+    footer { padding: 5rem 2.5rem 2.5rem; }
+    .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    .about-grid { gap: 4rem; }
+    .tech-metrics-bar { padding: 1.2rem 2.5rem; justify-content: center; }
   }
-  .marquee-track {
-    display: inline-block; animation: marquee 28s linear infinite;
-    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.15em;
-    text-transform: uppercase; color: var(--dim);
-  }
-  .marquee-track span { color: var(--accent); margin: 0 1.5rem; }
-  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  /* ─── MOBILE ─── */
+  /* ─── MOBILE PHONES & SMALL TABLETS (MAX-WIDTH: 900px) ─── */
   @media (max-width: 900px) {
-    nav { padding: 1.2rem 1.8rem; }
-    .nav-links { gap: 1.5rem; }
-    .hero { padding: 0 1.8rem; }
-    section { padding: 5rem 1.8rem; }
-    footer { padding: 4rem 1.8rem 2rem; }
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { gap: 1.2rem; }
+    .hero { padding: 0 1.5rem; }
+    section { padding: 4.5rem 1.5rem; }
+    footer { padding: 4rem 1.5rem 2rem; }
     .exp-row { grid-template-columns: 1fr; gap: 0.8rem; }
     .exp-year { padding-top: 0; }
     .projects-grid { grid-template-columns: 1fr; }
     .project-card { border-right: none; border-bottom: 1px solid var(--border); }
     .about-grid { grid-template-columns: 1fr; gap: 3rem; }
     .hero-bottom { grid-template-columns: 1fr; gap: 2rem; }
-    .hero-stats { justify-content: flex-start; }
+    .hero-stats { justify-content: flex-start; gap: 2rem; }
+    .tech-metrics-bar { padding: 1rem 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .metric-badge { width: 100%; justify-content: center; text-align: center; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; gap: 2rem; }
+    .footer-links { align-items: flex-start; }
+    .modal-content { width: 95%; height: 88vh; padding: 1.2rem; }
     #cursor-dot, #cursor-ring { display: none; }
   }
 
@@ -456,13 +471,13 @@
       <div class="modal-title">Anugrah Ajith — Resume</div>
       <button class="modal-close" id="modal-close-btn">×</button>
     </div>
-   <div class="modal-iframe-wrap">
-  <iframe src="resume.pdf" type="application/pdf">
-    <p>Your browser does not support PDFs. <a href="resume.pdf" download="Anugrah_Ajith_Resume.pdf">Download the PDF</a>.</p>
-  </iframe>
-</div>
+    <div class="modal-iframe-wrap">
+      <iframe src="resume.pdf" type="application/pdf">
+        <p>Your browser does not support PDFs. <a href="resume.pdf" download="Anugrah_Ajith_Resume.pdf">Download the PDF</a>.</p>
+      </iframe>
+    </div>
     <div class="modal-actions">
-      <a href="resume.pdf" download="resume.pdf" class="modal-btn primary">Download resume ↓</a>
+      <a href="resume.pdf" download="resume.pdf" class="modal-btn primary">Download Resume ↓</a>
     </div>
   </div>
 </div>
@@ -494,7 +509,7 @@
 
   <div class="hero-bottom">
     <p class="hero-desc">
-      CS Graduate (May 2026) from <strong>LPU</strong>. QA Analyst Intern at <strong>Evaratus[Formerly Scaler AI Labs ]</strong>.
+      CS Graduate (May 2026) from <strong>LPU</strong>. QA Analyst Intern at <strong>Evaratus (Formerly Scaler AI Labs)</strong>.
       Building systems that think, interfaces that resonate, and pipelines that scale.
       Harmonizing <strong>technical complexity</strong> with <strong>intuitive design</strong>.
     </p>
@@ -515,11 +530,12 @@
   </div>
 </section>
 
-<!-- MARQUEE -->
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    LLM Alignment <span>✦</span> RLHF Training <span>✦</span> XGBoost / SHAP <span>✦</span> FastAPI <span>✦</span> FFmpeg <span>✦</span> TensorFlow <span>✦</span> AI Evaluation <span>✦</span> Adaptive Streaming <span>✦</span> Red-Teaming <span>✦</span> Research Author <span>✦</span> System Design <span>✦</span> LLM Alignment <span>✦</span> RLHF Training <span>✦</span> XGBoost / SHAP <span>✦</span> FastAPI <span>✦</span> FFmpeg <span>✦</span> TensorFlow <span>✦</span> AI Evaluation <span>✦</span> Adaptive Streaming <span>✦</span> Red-Teaming <span>✦</span> Research Author <span>✦</span> System Design <span>✦</span>
-  </div>
+<!-- TECH METRICS BAR -->
+<div class="tech-metrics-bar">
+  <div class="metric-badge"><span>Core Skills:</span> Python / FastAPI</div>
+  <div class="metric-badge"><span>AI/ML Focus:</span> XGBoost / SHAP / RLHF</div>
+  <div class="metric-badge"><span>Infra:</span> FFmpeg / HLS / Docker</div>
+  <div class="metric-badge" style="background:var(--accent); color:var(--bg); font-weight:700; border-color:var(--accent);"><span>Status:</span> Available for Hire</div>
 </div>
 
 <!-- EXPERIENCE -->
@@ -771,11 +787,6 @@ window.addEventListener('load', () => {
     setTimeout(() => scramble(document.getElementById('hero-line2'), 'Ajith.', 700), 300);
   }, 1400);
 });
-
-/* ── MARQUEE PAUSE ON HOVER ── */
-const track = document.querySelector('.marquee-track');
-track.parentElement.addEventListener('mouseenter', () => track.style.animationPlayState = 'paused');
-track.parentElement.addEventListener('mouseleave', () => track.style.animationPlayState = 'running');
 </script>
 </body>
 </html>
