@@ -374,18 +374,39 @@
   .modal-btn.primary { background: var(--accent); color: var(--bg); font-weight: 700; border: none; }
   .modal-btn:hover { opacity: 0.85; }
 
-  /* ─── TECH METRICS BAR ─── */
-  .tech-metrics-bar {
-    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    padding: 1.2rem 3.5rem; background: var(--bg2);
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;
+  /* ─── MODERN FLUID MARQUEE ─── */
+  .marquee-wrap {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1.1rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+    background: var(--bg2);
+    position: relative;
+    mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
   }
-  .metric-badge {
-    font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em; color: var(--fg);
-    text-transform: uppercase; display: flex; align-items: center; gap: 0.6rem;
-    padding: 0.4rem 0.8rem; background: var(--card); border: 1px solid var(--border); border-radius: 2px;
+  .marquee-track {
+    display: inline-block;
+    animation: marquee 32s linear infinite;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dim);
   }
-  .metric-badge span { color: var(--accent); }
+  .marquee-track span {
+    color: var(--accent);
+    margin: 0 1.8rem;
+    text-shadow: 0 0 10px rgba(200, 240, 58, 0.3);
+  }
+  .marquee-wrap:hover .marquee-track {
+    animation-play-state: paused;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
 
   /* ─── SCROLL REVEAL ─── */
   .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
@@ -402,7 +423,6 @@
     footer { padding: 5rem 2.5rem 2.5rem; }
     .projects-grid { grid-template-columns: repeat(2, 1fr); }
     .about-grid { gap: 4rem; }
-    .tech-metrics-bar { padding: 1.2rem 2.5rem; justify-content: center; }
   }
 
   /* ─── MOBILE PHONES & SMALL TABLETS (MAX-WIDTH: 900px) ─── */
@@ -419,8 +439,6 @@
     .about-grid { grid-template-columns: 1fr; gap: 3rem; }
     .hero-bottom { grid-template-columns: 1fr; gap: 2rem; }
     .hero-stats { justify-content: flex-start; gap: 2rem; }
-    .tech-metrics-bar { padding: 1rem 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-    .metric-badge { width: 100%; justify-content: center; text-align: center; }
     .footer-bottom { flex-direction: column; align-items: flex-start; gap: 2rem; }
     .footer-links { align-items: flex-start; }
     .modal-content { width: 95%; height: 88vh; padding: 1.2rem; }
@@ -530,12 +548,11 @@
   </div>
 </section>
 
-<!-- TECH METRICS BAR -->
-<div class="tech-metrics-bar">
-  <div class="metric-badge"><span>Core Skills:</span> Python / FastAPI</div>
-  <div class="metric-badge"><span>AI/ML Focus:</span> XGBoost / SHAP / RLHF</div>
-  <div class="metric-badge"><span>Infra:</span> FFmpeg / HLS / Docker</div>
-  <div class="metric-badge" style="background:var(--accent); color:var(--bg); font-weight:700; border-color:var(--accent);"><span>Status:</span> Available for Hire</div>
+<!-- MARQUEE BAR -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    LLM Alignment <span>✦</span> RLHF Training <span>✦</span> XGBoost / SHAP <span>✦</span> FastAPI <span>✦</span> FFmpeg <span>✦</span> TensorFlow <span>✦</span> AI Evaluation <span>✦</span> Adaptive Streaming <span>✦</span> Red-Teaming <span>✦</span> Research Author <span>✦</span> System Design <span>✦</span> LLM Alignment <span>✦</span> RLHF Training <span>✦</span> XGBoost / SHAP <span>✦</span> FastAPI <span>✦</span> FFmpeg <span>✦</span> TensorFlow <span>✦</span> AI Evaluation <span>✦</span> Adaptive Streaming <span>✦</span> Red-Teaming <span>✦</span> Research Author <span>✦</span> System Design <span>✦</span>
+  </div>
 </div>
 
 <!-- EXPERIENCE -->
