@@ -81,13 +81,14 @@
   }
   .nav-logo span { color: var(--dim); }
   .nav-links { display: flex; gap: 2.5rem; align-items: center; }
-  .nav-links a {
+  .nav-links a, .nav-links button {
     text-decoration: none; color: var(--dim); font-size: 0.7rem;
     letter-spacing: 0.15em; text-transform: uppercase; font-family: var(--mono);
+    background: none; border: none; cursor: pointer;
     transition: color 0.25s;
     position: relative;
   }
-  .nav-links a:hover { color: var(--fg); }
+  .nav-links a:hover, .nav-links button:hover { color: var(--fg); }
   .nav-links .nav-cta {
     color: var(--bg); background: var(--accent);
     padding: 0.45rem 1.1rem; border-radius: 2px; font-weight: 700;
@@ -103,7 +104,6 @@
     position: relative; overflow: hidden;
   }
 
-  /* animated grid lines */
   .hero-grid {
     position: absolute; inset: 0; z-index: 0; pointer-events: none;
     background-image:
@@ -118,7 +118,6 @@
     100% { opacity: 0.7; background-size: 88px 88px; }
   }
 
-  /* glowing orb */
   .hero-orb {
     position: absolute; top: 18%; right: 6%;
     width: 420px; height: 420px; border-radius: 50%;
@@ -237,7 +236,6 @@
   .project-card:last-child { border-right: none; }
   .project-card:hover { background: #1a1a1a; }
 
-  /* animated corner accent */
   .project-card::after {
     content: '';
     position: absolute; bottom: 0; right: 0;
@@ -288,7 +286,6 @@
     line-height: 1.2; font-weight: 400;
   }
   .about-quote em { font-style: italic; color: var(--accent); }
-  .about-body { }
   .about-body p {
     font-size: 0.95rem; color: var(--dim); line-height: 1.85;
     margin-bottom: 1.5rem;
@@ -337,11 +334,45 @@
   }
   .footer-info { font-family: var(--mono); font-size: 0.68rem; color: var(--dim); line-height: 2; }
   .footer-links { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; }
-  .footer-links a {
+  .footer-links a, .footer-links button {
     font-family: var(--mono); font-size: 0.7rem; color: var(--dim);
-    text-decoration: none; transition: color 0.2s; letter-spacing: 0.08em;
+    text-decoration: none; background: none; border: none; cursor: pointer;
+    transition: color 0.2s; letter-spacing: 0.08em;
   }
-  .footer-links a:hover { color: var(--accent); }
+  .footer-links a:hover, .footer-links button:hover { color: var(--accent); }
+
+  /* ─── RESUME MODAL ─── */
+  #resume-modal {
+    position: fixed; inset: 0; z-index: 1000; background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  #resume-modal.active { opacity: 1; pointer-events: auto; }
+  .modal-content {
+    background: var(--card); border: 1px solid var(--border); width: 92%; max-width: 850px;
+    height: 85vh; padding: 2rem; position: relative; transform: translateY(20px); transition: transform 0.3s ease;
+    display: flex; flex-direction: column;
+  }
+  #resume-modal.active .modal-content { transform: translateY(0); }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+  .modal-title { font-family: var(--serif); font-size: 1.6rem; }
+  .modal-close {
+    background: none; border: 1px solid var(--border);
+    color: var(--dim); width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-family: var(--mono);
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .modal-close:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .modal-iframe-wrap { flex: 1; width: 100%; background: #000; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+  .modal-iframe-wrap iframe { width: 100%; height: 100%; border: none; }
+  .modal-actions { display: flex; gap: 1rem; margin-top: 1.2rem; justify-content: flex-end; }
+  .modal-btn {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 0.7rem 1.4rem; border-radius: 2px; text-decoration: none; cursor: pointer; transition: opacity 0.2s;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  }
+  .modal-btn.primary { background: var(--accent); color: var(--bg); font-weight: 700; border: none; }
+  .modal-btn:hover { opacity: 0.85; }
 
   /* ─── SCROLL REVEAL ─── */
   .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
@@ -418,6 +449,27 @@
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 
+<!-- RESUME MODAL POPUP WITH EMBEDDED PDF VIEWER -->
+<div id="resume-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">Anugrah Ajith — Resume</div>
+      <button class="modal-close" id="modal-close-btn">×</button>
+    </div>
+   <div class="modal-iframe-wrap">
+  <iframe src="resume.pdf" type="application/pdf">
+    <p>Your browser does not support PDFs. <a href="resume.pdf" download="Anugrah_Ajith_Resume.pdf">Download the PDF</a>.</p>
+  </iframe>
+</div>
+<div class="modal-actions">
+  <a href="resume.pdf" download="Anugrah_Ajith_Resume.pdf" class="modal-btn primary">Download CV ↓</a>
+</div>
+    <div class="modal-actions">
+      <a href="resume.pdf" download="resume.pdf" class="modal-btn primary">Download resume ↓</a>
+    </div>
+  </div>
+</div>
+
 <!-- NAV -->
 <nav>
   <div class="nav-logo"><span>AA </span>// HUMAN_IN_THE_LOOP</div>
@@ -425,6 +477,7 @@
     <a href="#experience">Work</a>
     <a href="#projects">Builds</a>
     <a href="#about">About</a>
+    <button id="resume-trigger">Resume</button>
     <a href="mailto:anugrahajith777@gmail.com" class="nav-cta">Hire Me</a>
   </div>
 </nav>
@@ -444,7 +497,7 @@
 
   <div class="hero-bottom">
     <p class="hero-desc">
-      CS Graduate (May 2026) from <strong>LPU</strong>. QA Intern at <strong>Scaler AI Labs</strong>.
+      CS Graduate (May 2026) from <strong>LPU</strong>. QA Analyst Intern at <strong>Evaratus[Formerly Scaler AI Labs ]</strong>.
       Building systems that think, interfaces that resonate, and pipelines that scale.
       Harmonizing <strong>technical complexity</strong> with <strong>intuitive design</strong>.
     </p>
@@ -484,23 +537,23 @@
     <div class="exp-row reveal">
       <div class="exp-year">Sep 2026 — Present</div>
       <div>
-        <div class="exp-role">QA Intern</div>
-        <div class="exp-company">Scaler AI Labs · Bengaluru</div>
+        <div class="exp-role">QA Analyst Intern</div>
+        <div class="exp-company">Evaratus (Formerly Scaler AI Labs) · Bengaluru</div>
       </div>
       <div>
-        <p class="exp-desc">Testing and validating AI models, LLMs, and reinforcement learning environments. Responsibilities include AI & LLM validation for conversational workflows and prompts, evaluating agent behavior in RL environments, executing bug hunting for complex software workflows, and providing final product sign-offs.</p>
+        <p class="exp-desc">Conducted rigorous quality assurance and evaluations for complex technical datasets and model outputs. Optimized testing frameworks to validate system reliability and accuracy across high-density pipelines.</p>
         <span class="exp-tag current">Present</span>
       </div>
     </div>
 
     <div class="exp-row reveal reveal-delay-1">
-      <div class="exp-year">Mar 2026 — Apr 2026</div>
+      <div class="exp-year">Mar 2026 — May 2026</div>
       <div>
-        <div class="exp-role">Business Development</div>
-        <div class="exp-company">Acmegrade</div>
+        <div class="exp-role">Business Development Associate Intern</div>
+        <div class="exp-company">Acmegrade Pvt Ltd · Bengaluru</div>
       </div>
       <div>
-        <p class="exp-desc">Bridging technical product capabilities with market-driven user needs — translating complex AI features into compelling value propositions.</p>
+        <p class="exp-desc">Executed targeted outreach and market research strategies to generate qualified leads and drive prospective client engagement. Collaborated on strategic sales initiatives, analyzing client needs to pitch tailored educational solutions.</p>
         <span class="exp-tag">Completed</span>
       </div>
     </div>
@@ -508,11 +561,11 @@
     <div class="exp-row reveal reveal-delay-2">
       <div class="exp-year">Feb 2025 — Jul 2025</div>
       <div>
-        <div class="exp-role">Senior AI Trainer</div>
+        <div class="exp-role">Senior AI Training Contributor (RLHF)</div>
         <div class="exp-company">Outlier (Scale AI)</div>
       </div>
       <div>
-        <p class="exp-desc">Aligning frontier LLMs via RLHF and performing adversarial red-teaming for algorithmic reasoning — shaping how the next generation of AI systems behave.</p>
+        <p class="exp-desc">Optimized frontier LLM alignment via RLHF workflows for Python-based algorithmic reasoning and logic verification. Executed adversarial Red Teaming to identify edge-case vulnerabilities.</p>
         <span class="exp-tag">Completed</span>
       </div>
     </div>
@@ -524,7 +577,7 @@
         <div class="exp-company">Intl. OS Research Journals</div>
       </div>
       <div>
-        <p class="exp-desc">Published "Novel Users in Specific Domains" — an exploration of specialized user behaviour patterns in OS environments, bridging HCI theory with practical systems design.</p>
+        <p class="exp-desc">Published Lead Author - "Novel Users in Specific Domains" — an exploration of specialized user behaviour patterns in OS environments.</p>
         <span class="exp-tag">Published</span>
       </div>
     </div>
@@ -545,7 +598,7 @@
       <div class="project-num">Project / 001</div>
       <h3 class="project-title">GeoAI: Air Quality Forecasting</h3>
       <div class="project-stack">XGBoost · SHAP · Python</div>
-      <p class="project-desc">Predictive air-quality model trained on 420,000+ geospatial records with full explainability via SHAP values. Production API with real-time inference.</p>
+      <p class="project-desc">Architected a predictive intelligence engine achieving a validated $R^{2}=0.9579$ on 420,000+ time-series records with full explainability via SHAP values.</p>
       <div class="project-metric">0.9579 <span>R² Score</span></div>
     </a>
 
@@ -554,7 +607,7 @@
       <div class="project-num">Project / 002</div>
       <h3 class="project-title">Distributed HLS Streaming</h3>
       <div class="project-stack">FastAPI · FFmpeg · HLS</div>
-      <p class="project-desc">Adaptive bitrate streaming service supporting high-density video delivery and real-time transcoding workflows. Handles concurrent session scaling gracefully.</p>
+      <p class="project-desc">Developed an adaptive bitrate streaming service using FastAPI and HLS protocols. Orchestrated asynchronous transcoding workflows using FFmpeg.</p>
       <div class="project-metric">ABR <span>Adaptive Bitrate Engine</span></div>
     </div>
 
@@ -563,7 +616,7 @@
       <div class="project-num">Project / 003</div>
       <h3 class="project-title">ML Behavioural Security</h3>
       <div class="project-stack">Scikit-learn · TensorFlow</div>
-      <p class="project-desc">Anomaly detection prototype that identifies browsing-based threats and zero-day attack patterns using behavioural signals rather than signature matching.</p>
+      <p class="project-desc">Architected a security prototype utilizing ML-based anomaly detection to identify browsing-based threats and zero-day attack patterns.</p>
       <div class="project-metric">0-day <span>Pattern Detection</span></div>
     </div>
   </div>
@@ -583,13 +636,10 @@
     </div>
     <div class="about-body reveal reveal-delay-1">
       <p>
-        I'm a Computer Science graduate from Lovely Professional University (Class of May 2026), currently working as a <strong>QA Intern</strong> at Scaler AI Labs in Bengaluru — where I test, validate, and align frontier language models and reinforcement learning environments.
+        I'm a Computer Science graduate from Lovely Professional University (Class of May 2026), currently working as a <strong>QA Analyst Intern</strong> at Evaratus (Formerly Scaler AI Labs) in Bengaluru — where I test, validate, and align frontier language models and reinforcement learning environments.
       </p>
       <p>
         My work sits at the intersection of <strong>machine learning</strong>, <strong>systems engineering</strong>, and <strong>product intuition</strong>. Whether it's crafting SFT golden responses, building XAI pipelines, or architecting adaptive media systems — I'm drawn to problems where elegance and rigor have to coexist.
-      </p>
-      <p>
-        I believe the best engineers are also designers — people who obsess over how something <strong>feels</strong> as much as how it <strong>works</strong>.
       </p>
       <div class="skills-list">
         <span class="skill-pill">Python</span>
@@ -624,6 +674,7 @@
       <div class="footer-links">
         <a href="https://linkedin.com/in/anugrah-ajith-cs" target="_blank">LinkedIn ↗</a>
         <a href="https://github.com/NEOoo3" target="_blank">GitHub ↗</a>
+        <button class="footer-resume-trigger">Resume ↗</button>
         <a href="tel:+917888359259">+91 78883 59259</a>
         <a href="mailto:anugrahajith777@gmail.com">anugrahajith777@gmail.com</a>
       </div>
@@ -672,6 +723,19 @@ document.querySelectorAll('a, button, .exp-row, .project-card, .skill-pill').for
 });
 document.addEventListener('mousedown', () => document.body.classList.add('clicking'));
 document.addEventListener('mouseup',   () => document.body.classList.remove('clicking'));
+
+/* ── RESUME MODAL HANDLERS ── */
+const modal = document.getElementById('resume-modal');
+const openTriggers = [document.getElementById('resume-trigger'), document.querySelector('.footer-resume-trigger')];
+const closeBtn = document.getElementById('modal-close-btn');
+
+openTriggers.forEach(btn => {
+  if(btn) btn.addEventListener('click', () => modal.classList.add('active'));
+});
+closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) modal.classList.remove('active');
+});
 
 /* ── SCROLL REVEAL ── */
 const revealEls = document.querySelectorAll('.reveal');
